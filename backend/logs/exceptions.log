@@ -1,0 +1,76 @@
+2025-08-13 16:53:41 [ERROR]: uncaughtException: app.use() requires a middleware function
+TypeError: app.use() requires a middleware function
+    at Function.use (C:\Users\Administrator\Documents\html\backend\node_modules\express\lib\application.js:217:11)
+    at Object.<anonymous> (C:\Users\Administrator\Documents\html\backend\server.js:83:5)
+    at Module._compile (internal/modules/cjs/loader.js:1114:14)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1143:10)
+    at Module.load (internal/modules/cjs/loader.js:979:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:819:12)
+    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:75:12)
+    at internal/main/run_main_module.js:17:47
+TypeError: app.use() requires a middleware function
+    at Function.use (C:\Users\Administrator\Documents\html\backend\node_modules\express\lib\application.js:217:11)
+    at Object.<anonymous> (C:\Users\Administrator\Documents\html\backend\server.js:83:5)
+    at Module._compile (internal/modules/cjs/loader.js:1114:14)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1143:10)
+    at Module.load (internal/modules/cjs/loader.js:979:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:819:12)
+    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:75:12)
+    at internal/main/run_main_module.js:17:47
+2025-08-13 16:53:55 [ERROR]: uncaughtException: app.use() requires a middleware function
+TypeError: app.use() requires a middleware function
+    at Function.use (C:\Users\Administrator\Documents\html\backend\node_modules\express\lib\application.js:217:11)
+    at Object.<anonymous> (C:\Users\Administrator\Documents\html\backend\server.js:83:5)
+    at Module._compile (internal/modules/cjs/loader.js:1114:14)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1143:10)
+    at Module.load (internal/modules/cjs/loader.js:979:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:819:12)
+    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:75:12)
+    at internal/main/run_main_module.js:17:47
+TypeError: app.use() requires a middleware function
+    at Function.use (C:\Users\Administrator\Documents\html\backend\node_modules\express\lib\application.js:217:11)
+    at Object.<anonymous> (C:\Users\Administrator\Documents\html\backend\server.js:83:5)
+    at Module._compile (internal/modules/cjs/loader.js:1114:14)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1143:10)
+    at Module.load (internal/modules/cjs/loader.js:979:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:819:12)
+    at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:75:12)
+    at internal/main/run_main_module.js:17:47
+2025-08-13 16:58:57 [ERROR]: uncaughtException: app.use() requires a middleware function
+TypeError: app.use() requires a middleware function
+    at Function.use (C:\Users\Administrator\Documents\html\backend\node_modules\express\lib\application.js:217:11)
+    at Object.<anonymous> (C:\Users\Administrator\Documents\html\backend\server.js:83:5)
+    at Module._compile (node:internal/modules/cjs/loader:1364:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)
+    at Module.load (node:internal/modules/cjs/loader:1203:32)
+    at Module._load (node:internal/modules/cjs/loader:1019:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12)
+    at node:internal/main/run_main_module:28:49
+TypeError: app.use() requires a middleware function
+    at Function.use (C:\Users\Administrator\Documents\html\backend\node_modules\express\lib\application.js:217:11)
+    at Object.<anonymous> (C:\Users\Administrator\Documents\html\backend\server.js:83:5)
+    at Module._compile (node:internal/modules/cjs/loader:1364:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)
+    at Module.load (node:internal/modules/cjs/loader:1203:32)
+    at Module._load (node:internal/modules/cjs/loader:1019:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12)
+    at node:internal/main/run_main_module:28:49
+2025-08-13 16:59:06 [ERROR]: uncaughtException: app.use() requires a middleware function
+TypeError: app.use() requires a middleware function
+    at Function.use (C:\Users\Administrator\Documents\html\backend\node_modules\express\lib\application.js:217:11)
+    at Object.<anonymous> (C:\Users\Administrator\Documents\html\backend\server.js:83:5)
+    at Module._compile (node:internal/modules/cjs/loader:1364:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)
+    at Module.load (node:internal/modules/cjs/loader:1203:32)
+    at Module._load (node:internal/modules/cjs/loader:1019:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12)
+    at node:internal/main/run_main_module:28:49
+TypeError: app.use() requires a middleware function
+    at Function.use (C:\Users\Administrator\Documents\html\backend\node_modules\express\lib\application.js:217:11)
+    at Object.<anonymous> (C:\Users\Administrator\Documents\html\backend\server.js:83:5)
+    at Module._compile (node:internal/modules/cjs/loader:1364:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)
+    at Module.load (node:internal/modules/cjs/loader:1203:32)
+    at Module._load (node:internal/modules/cjs/loader:1019:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12)
+    at node:internal/main/run_main_module:28:49

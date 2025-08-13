@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跨境电商计算器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        danger: '#EF4444',
+                        neutral: '#6B7280',
+                        light: '#F3F4F6',
+                        dark: '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+            .input-focus {
+                @apply focus:ring-2 focus:ring-primary/50 focus:border-primary;
+            }
+            .formula-tooltip {
+                @apply absolute right-2 top-1/2 transform -translate-y-1/2 text-neutral cursor-help hover:text-primary transition-colors;
+            }
+            .formula-container {
+                @apply text-xs bg-gray-50 p-2 rounded mt-1 border border-gray-100 hidden;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-dark">
+    <!-- 顶部导航 -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-calculator text-primary text-2xl"></i>
+                <h1 class="text-xl font-bold text-dark">跨境电商计算器</h1>
+            </div>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="#" class="text-primary font-medium hover:underline">利润计算</a></li>
+                    <li><a href="#" class="text-neutral hover:text-primary transition-colors">历史记录</a></li>
+                    <li><a href="#" class="text-neutral hover:text-primary transition-colors">数据分析</a></li>
+                    <li><a href="#" class="text-neutral hover:text-primary transition-colors">系统设置</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-10 py-4">
+        <!-- 页面标题 -->
+        <div class="mb-4 text-center">
+            <h2 class="text-xl font-bold mb-1">跨境电商计算器</h2>
+            <p class="text-sm text-neutral max-w-3xl mx-auto">精准计算每笔交易的利润空间，优化采购与销售策略</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <!-- 左侧：输入表单 -->
+            <div class="lg:col-span-2 space-y-3">
+                <!-- 产品信息 -->
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <h3 class="text-base font-semibold mb-3 flex items-center">
+                        <i class="fa fa-product-hunt text-primary mr-2 text-sm"></i>产品信息
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label for="product-name" class="block text-xs font-medium text-neutral mb-1">产品名称</label>
+                            <input type="text" id="product-name" class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all" placeholder="例如：无线蓝牙耳机">
+                        </div>
+                        <div>
+                            <label for="product-category" class="block text-xs font-medium text-neutral mb-1">产品类别</label>
+                            <select id="product-category" class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                                <option value="">请选择类别</option>
+                                <option value="electronics">电子产品</option>
+                                <option value="home">家居用品</option>
+                                <option value="fashion">时尚配饰</option>
+                                <option value="beauty">美妆个护</option>
+                                <option value="toys">玩具礼品</option>
+                                <option value="other">其他类别</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="product-weight" class="block text-xs font-medium text-neutral mb-1">产品重量(kg)</label>
+                            <input type="number" id="product-weight" step="0.01" min="0" class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all" placeholder="0.5">
+                        </div>
+                        <div>
+                            <label for="supplier" class="block text-xs font-medium text-neutral mb-1">供应商</label>
+                            <input type="text" id="supplier" class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all" placeholder="供应商名称">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 采购成本 -->
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <h3 class="text-base font-semibold mb-3 flex items-center">
+                        <i class="fa fa-shopping-cart text-primary mr-2 text-sm"></i>采购成本
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label for="purchase-currency" class="block text-xs font-medium text-neutral mb-1">采购币种</label>
+                            <select id="purchase-currency" class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                                <option value="CNY" data-symbol="¥" selected>人民币 (CNY)</option>
+                                <option value="USD" data-symbol="$">美元 (USD)</option>
+                                <option value="EUR" data-symbol="€">欧元 (EUR)</option>
+                                <option value="GBP" data-symbol="£">英镑 (GBP)</option>
+                                <option value="JPY" data-symbol="¥">日元 (JPY)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="purchase-exchange-rate" class="block text-xs font-medium text-neutral mb-1">采购汇率</label>
+                            <input type="number" id="purchase-exchange-rate" step="0.01" min="0" value="1.00" class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                        </div>
+                        <div>
+                            <label for="purchase-quantity" class="block text-xs font-medium text-neutral mb-1">采购数量(件)</label>
+                            <input type="number" id="purchase-quantity" min="1" value="100" class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                        </div>
+                        <div>
+                            <label for="purchase-price" class="block text-xs font-medium text-neutral mb-1">采购单价</label>
+                            <div class="relative">
+                                <span id="purchase-price-symbol" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-neutral text-xs">¥</span>
+                                <input type="number" id="purchase-price" step="0.01" min="0" value="50.00" class="w-full pl-6 pr-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="purchase-freight" class="block text-xs font-medium text-neutral mb-1">国内运费</label>
+                            <div class="relative">
+                                <span id="freight-symbol" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-neutral text-xs">¥</span>
+                                <input type="number" id="purchase-freight" step="0.01" min="0" value="50.00" class="w-full pl-6 pr-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="other-purchase-costs" class="block text-xs font-medium text-neutral mb-1">其他采购成本</label>
+                            <div class="relative">
+                                <span id="other-purchase-symbol" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-neutral text-xs">¥</span>
+                                <input type="number" id="other-purchase-costs" step="0.01" min="0" value="0.00" class="w-full pl-6 pr-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all" placeholder="如包装费、质检费等">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 销售与费用 -->
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <h3 class="text-base font-semibold mb-3 flex items-center">
+                        <i class="fa fa-line-chart text-primary mr-2 text-sm"></i>销售与费用
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label for="selling-currency" class="block text-xs font-medium text-neutral mb-1">销售币种</label>
+                            <select id="selling-currency" class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                                <option value="CNY" data-symbol="¥">人民币 (CNY)</option>
+                                <option value="USD" data-symbol="$" selected>美元 (USD)</option>
+                                <option value="EUR" data-symbol="€">欧元 (EUR)</option>
+                                <option value="GBP" data-symbol="£">英镑 (GBP)</option>
+                                <option value="JPY" data-symbol="¥">日元 (JPY)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="selling-price" class="block text-xs font-medium text-neutral mb-1">电商平台售价</label>
+                            <div class="relative">
+                                <span id="price-currency-symbol" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-neutral text-xs">$</span>
+                                <input type="number" id="selling-price" step="0.01" min="0" value="16.67" class="w-full pl-6 pr-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="selling-exchange-rate" class="block text-xs font-medium text-neutral mb-1">销售汇率</label>
+                            <input type="number" id="selling-exchange-rate" step="0.01" min="0" value="7.20" class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                        </div>
+                        <div>
+                            <label for="platform-commission" class="block text-xs font-medium text-neutral mb-1">平台佣金(%)</label>
+                            <input type="number" id="platform-commission" step="0.1" min="0" max="100" value="5.0" class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                        </div>
+                        <div>
+                            <label for="international-freight" class="block text-xs font-medium text-neutral mb-1">国际运费</label>
+                            <div class="relative">
+                                <span id="international-freight-symbol" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-neutral text-xs">$</span>
+                                <input type="number" id="international-freight" step="0.01" min="0" value="2.08" class="w-full pl-6 pr-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="advertising-cost" class="block text-xs font-medium text-neutral mb-1">广告费用</label>
+                            <div class="relative">
+                                <span id="advertising-cost-symbol" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-neutral text-xs">$</span>
+                                <input type="number" id="advertising-cost" step="0.01" min="0" value="0.69" class="w-full pl-6 pr-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="return-rate" class="block text-xs font-medium text-neutral mb-1">退货率(%)</label>
+                            <input type="number" id="return-rate" step="0.1" min="0" max="100" value="3.0" class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                        </div>
+                        <div>
+                            <label for="other-selling-costs" class="block text-xs font-medium text-neutral mb-1">其他销售成本</label>
+                            <div class="relative">
+                                <span id="other-selling-costs-symbol" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-neutral text-xs">$</span>
+                                <input type="number" id="other-selling-costs" step="0.01" min="0" value="0.00" class="w-full pl-6 pr-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all" placeholder="如仓储费、保险费等">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="target-profit-rate" class="block text-xs font-medium text-neutral mb-1">目标利润率(%)</label>
+                            <div class="flex gap-1">
+                                <input type="number" id="target-profit-rate" step="0.1" min="0" max="90" value="15.0" class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded input-focus transition-all">
+                                <button id="calc-target-price-btn" class="px-2 py-1.5 bg-primary text-white rounded hover:bg-primary/90 transition-all whitespace-nowrap text-xs"><i class="fa fa-bullseye mr-1"></i>建议售价</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="flex flex-wrap gap-2">
+                    <button id="calculate-btn" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-all font-medium flex items-center text-sm">
+                        <i class="fa fa-calculator mr-1"></i>计算利润
+                    </button>
+                    <button id="save-btn" class="px-4 py-2 bg-secondary text-white rounded hover:bg-secondary/90 transition-all font-medium flex items-center text-sm">
+                        <i class="fa fa-save mr-1"></i>保存记录
+                    </button>
+                    <button id="reset-btn" class="px-4 py-2 bg-neutral text-white rounded hover:bg-neutral/90 transition-all font-medium flex items-center text-sm">
+                        <i class="fa fa-refresh mr-1"></i>重置
+                    </button>
+                </div>
+            </div>
+
+            <!-- 右侧：计算结果 -->
+            <div class="space-y-3">
+                <!-- 利润概览 -->
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <h3 class="text-base font-semibold mb-3 flex items-center">
+                        <i class="fa fa-bar-chart text-primary mr-2 text-sm"></i>利润概览
+                    </h3>
+                    
+                    <div class="space-y-2 text-sm">
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                <span class="text-neutral text-xs">总采购成本(原币种)</span>
+                                <span id="original-purchase-cost" class="font-medium text-sm">¥0.00</span>
+                            </div>
+                            <div id="formula-original-purchase" class="formula-container">
+                                公式：采购数量 × 采购单价 + 国内运费 + 其他采购成本
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                <span class="text-neutral text-xs">总采购成本(人民币)</span>
+                                <span id="total-purchase-cost" class="font-medium text-sm">¥0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-total-purchase"></i>
+                            </div>
+                            <div id="formula-total-purchase" class="formula-container">
+                                公式：总采购成本(原币种) × 采购汇率
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                <span class="text-neutral text-xs">总销售金额(人民币)</span>
+                                <span id="total-sales-amount" class="font-medium text-sm">¥0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-total-sales"></i>
+                            </div>
+                            <div id="formula-total-sales" class="formula-container">
+                                公式：采购数量 × 电商平台售价 × 销售汇率
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                <span class="text-neutral text-xs">平台佣金</span>
+                                <span id="total-commission" class="font-medium text-sm">¥0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-commission"></i>
+                            </div>
+                            <div id="formula-commission" class="formula-container">
+                                公式：总销售金额(人民币) × (平台佣金% ÷ 100)
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                <span class="text-neutral text-xs">总运费成本</span>
+                                <span id="total-shipping-cost" class="font-medium text-sm">¥0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-shipping"></i>
+                            </div>
+                            <div id="formula-shipping" class="formula-container">
+                                公式：采购数量 × 国际运费 × 销售汇率
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                <span class="text-neutral text-xs">总广告成本</span>
+                                <span id="total-advertising-cost" class="font-medium text-sm">¥0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-advertising"></i>
+                            </div>
+                            <div id="formula-advertising" class="formula-container">
+                                公式：采购数量 × 广告费用 × 销售汇率
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                <span class="text-neutral text-xs">退货损失</span>
+                                <span id="return-loss" class="font-medium text-sm">¥0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-return-loss"></i>
+                            </div>
+                            <div id="formula-return-loss" class="formula-container">
+                                公式：总销售金额(人民币) × (退货率% ÷ 100)
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                <span class="text-neutral text-xs">其他总成本</span>
+                                <span id="total-other-costs" class="font-medium text-sm">¥0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-other-costs"></i>
+                            </div>
+                            <div id="formula-other-costs" class="formula-container">
+                                公式：其他销售成本 × 销售汇率
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                <span class="text-neutral text-xs">总成本</span>
+                                <span id="total-cost" class="font-medium text-sm">¥0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-total-cost"></i>
+                            </div>
+                            <div id="formula-total-cost" class="formula-container">
+                                公式：总采购成本 + 平台佣金 + 总运费成本 + 总广告成本 + 退货损失 + 其他总成本
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-2 bg-gray-50 px-2 rounded">
+                                <span class="font-semibold text-sm">预期总利润(人民币)</span>
+                                <span id="total-profit" class="font-bold text-base">¥0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-total-profit"></i>
+                            </div>
+                            <div id="formula-total-profit" class="formula-container">
+                                公式：总销售金额(人民币) - 总成本
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-2 bg-gray-50 px-2 rounded">
+                                <span class="font-semibold text-sm">利润率</span>
+                                <span id="profit-rate" class="font-bold text-base">0.00%</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-profit-rate"></i>
+                            </div>
+                            <div id="formula-profit-rate" class="formula-container">
+                                公式：(预期总利润 ÷ 总销售金额) × 100%
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                <span class="text-neutral text-xs">每件利润(人民币)</span>
+                                <span id="profit-per-unit" class="font-medium text-sm">¥0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-profit-per-unit"></i>
+                            </div>
+                            <div id="formula-profit-per-unit" class="formula-container">
+                                公式：预期总利润 ÷ 采购数量
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                <span class="text-neutral text-xs">保本售价(原币种)</span>
+                                <span id="break-even-price-original" class="font-medium text-sm">$0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-break-even"></i>
+                            </div>
+                            <div id="formula-break-even" class="formula-container">
+                                公式：固定成本 ÷ [采购数量 × 销售汇率 × (1 - 平台佣金% - 退货率%)]<br>固定成本 = 总采购成本(人民币) + 采购数量 × (国际运费 + 广告费用) × 销售汇率 + 其他销售成本 × 销售汇率
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                <span class="text-neutral text-xs">保本售价(人民币)</span>
+                                <span id="break-even-price-cny" class="font-medium text-sm">¥0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-break-even-cny"></i>
+                            </div>
+                            <div id="formula-break-even-cny" class="formula-container">
+                                公式：保本售价(原币种) × 销售汇率
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 border-b border-gray-100">
+                                <span class="text-neutral text-xs">建议售价(达成目标利润, 原币种)</span>
+                                <span id="recommended-price-original" class="font-medium text-sm">$0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-recommended"></i>
+                            </div>
+                            <div id="formula-recommended" class="formula-container">
+                                公式：固定成本 ÷ [采购数量 × 销售汇率 × (1 - 平台佣金% - 退货率% - 目标利润率%)]
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1 pt-3 border-t border-gray-200">
+                                <span class="text-neutral text-xs">销售金额(原币种)</span>
+                                <span id="original-currency-amount" class="font-medium text-sm">$0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-original-amount"></i>
+                            </div>
+                            <div id="formula-original-amount" class="formula-container">
+                                公式：采购数量 × 电商平台售价
+                            </div>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="flex justify-between items-center py-1">
+                                <span class="text-neutral text-xs">总利润(原币种)</span>
+                                <span id="original-currency-profit" class="font-medium text-sm">$0.00</span>
+                                <i class="fa fa-question-circle formula-tooltip text-xs" data-target="formula-original-profit"></i>
+                            </div>
+                            <div id="formula-original-profit" class="formula-container">
+                                公式：预期总利润(人民币) ÷ 销售汇率
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 利润占比图表 -->
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <h3 class="text-base font-semibold mb-3 flex items-center">
+                        <i class="fa fa-pie-chart text-primary mr-2 text-sm"></i>成本占比分析
+                    </h3>
+                    <div class="h-48">
+                        <canvas id="cost-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 利润建议 -->
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <h3 class="text-base font-semibold mb-3 flex items-center">
+                        <i class="fa fa-lightbulb-o text-primary mr-2 text-sm"></i>利润优化建议
+                    </h3>
+                    <div id="profit-suggestions" class="text-xs text-neutral space-y-1">
+                        <p>请点击"计算利润"获取个性化建议</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 历史记录 -->
+        <div class="mt-6 bg-white rounded-lg p-4 shadow-md">
+            <h3 class="text-base font-semibold mb-3 flex items-center">
+                <i class="fa fa-history text-primary mr-2 text-sm"></i>计算历史记录
+            </h3>
+            <div class="flex flex-wrap gap-2 mb-3">
+                <button id="export-btn" class="px-3 py-1.5 bg-primary text-white rounded hover:bg-primary/90 transition-all text-xs"><i class="fa fa-download mr-1"></i>导出CSV</button>
+                <button id="clear-history-btn" class="px-3 py-1.5 bg-danger text-white rounded hover:bg-danger/90 transition-all text-xs"><i class="fa fa-trash mr-1"></i>清空历史</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-3 py-2 text-left text-xs font-medium text-neutral uppercase tracking-wider">产品名称</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-neutral uppercase tracking-wider">采购数量</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-neutral uppercase tracking-wider">采购单价/币种</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-neutral uppercase tracking-wider">销售单价/币种</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-neutral uppercase tracking-wider">总利润(元)</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-neutral uppercase tracking-wider">利润率</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-neutral uppercase tracking-wider">计算时间</th>
+                            <th class="px-3 py-2 text-left text-xs font-medium text-neutral uppercase tracking-wider">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body" class="divide-y divide-gray-200">
+                        <!-- 历史记录将通过JavaScript动态填充 -->
+                        <tr>
+                            <td colspan="8" class="px-3 py-6 text-center text-neutral text-sm">暂无记录</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white mt-6 py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-2 md:mb-0">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa fa-calculator text-primary text-lg"></i>
+                        <span class="font-bold text-sm">跨境电商计算器</span>
+                    </div>
+                    <p class="text-gray-400 text-xs mt-1">助力1688采购转卖电商平台业务的利润优化</p>
+                </div>
+                <div class="text-gray-400 text-xs">
+                    &copy; 2023 跨境电商工具. 保留所有权利.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 通知提示框 -->
+    <div id="notification" class="fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center">
+        <i id="notification-icon" class="mr-2"></i>
+        <span id="notification-message"></span>
+    </div>
+
+    <script>
+        // 币种符号映射表
+        const currencySymbols = {
+            'CNY': '¥',
+            'USD': '$',
+            'EUR': '€',
+            'GBP': '£',
+            'JPY': '¥'
+        };
+        
+        // 初始化图表
+        const ctx = document.getElementById('cost-chart').getContext('2d');
+        const costChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['采购成本', '运费', '平台佣金', '广告费用', '其他成本'],
+                datasets: [{
+                    data: [0, 0, 0, 0, 0],
+                    backgroundColor: [
+                        '#3B82F6',
+                        '#10B981',
+                        '#F59E0B',
+                        '#EF4444',
+                        '#6B7280'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 15
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+
+        // 采购币种选择事件监听
+        document.getElementById('purchase-currency').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const symbol = selectedOption.getAttribute('data-symbol');
+            const currency = this.value;
+            
+            // 更新采购相关输入框前的币种符号
+            document.getElementById('purchase-price-symbol').textContent = symbol;
+            document.getElementById('freight-symbol').textContent = symbol;
+            document.getElementById('other-purchase-symbol').textContent = symbol;
+            
+            // 根据币种调整默认采购汇率
+            switch(currency) {
+                case 'CNY':
+                    document.getElementById('purchase-exchange-rate').value = 1.00;
+                    break;
+                case 'USD':
+                    document.getElementById('purchase-exchange-rate').value = 7.20;
+                    break;
+                case 'EUR':
+                    document.getElementById('purchase-exchange-rate').value = 7.80;
+                    break;
+                case 'GBP':
+                    document.getElementById('purchase-exchange-rate').value = 9.00;
+                    break;
+                case 'JPY':
+                    document.getElementById('purchase-exchange-rate').value = 0.05;
+                    break;
+            }
+        });
+
+        // 销售币种选择事件监听
+        document.getElementById('selling-currency').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const symbol = selectedOption.getAttribute('data-symbol');
+            const currency = this.value;
+            
+            // 更新所有销售相关输入框前的币种符号
+            document.getElementById('price-currency-symbol').textContent = symbol;
+            document.getElementById('international-freight-symbol').textContent = symbol;
+            document.getElementById('advertising-cost-symbol').textContent = symbol;
+            document.getElementById('other-selling-costs-symbol').textContent = symbol;
+            
+            // 更新结果区域的币种符号
+            document.getElementById('original-currency-amount').textContent = symbol + '0.00';
+            document.getElementById('original-currency-profit').textContent = symbol + '0.00';
+            
+            // 根据币种调整默认销售汇率和相关费用值
+            switch(currency) {
+                case 'CNY':
+                    document.getElementById('selling-exchange-rate').value = 1.00;
+                    document.getElementById('selling-price').value = 120.00;
+                    document.getElementById('international-freight').value = 15.00;
+                    document.getElementById('advertising-cost').value = 5.00;
+                    break;
+                case 'USD':
+                    document.getElementById('selling-exchange-rate').value = 7.20;
+                    document.getElementById('selling-price').value = 16.67;
+                    document.getElementById('international-freight').value = 2.08;
+                    document.getElementById('advertising-cost').value = 0.69;
+                    break;
+                case 'EUR':
+                    document.getElementById('selling-exchange-rate').value = 7.80;
+                    document.getElementById('selling-price').value = 15.38;
+                    document.getElementById('international-freight').value = 1.92;
+                    document.getElementById('advertising-cost').value = 0.64;
+                    break;
+                case 'GBP':
+                    document.getElementById('selling-exchange-rate').value = 9.00;
+                    document.getElementById('selling-price').value = 13.33;
+                    document.getElementById('international-freight').value = 1.67;
+                    document.getElementById('advertising-cost').value = 0.56;
+                    break;
+                case 'JPY':
+                    document.getElementById('selling-exchange-rate').value = 0.05;
+                    document.getElementById('selling-price').value = 2400.00;
+                    document.getElementById('international-freight').value = 300.00;
+                    document.getElementById('advertising-cost').value = 100.00;
+                    break;
+            }
+        });
+
+        // 公式提示框交互
+        document.querySelectorAll('.formula-tooltip').forEach(tooltip => {
+            tooltip.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const targetId = this.getAttribute('data-target');
+                const formulaElement = document.getElementById(targetId);
+                
+                // 隐藏所有公式
+                document.querySelectorAll('.formula-container').forEach(el => {
+                    el.classList.add('hidden');
+                });
+                
+                // 显示当前公式
+                formulaElement.classList.remove('hidden');
+            });
+        });
+
+        // 点击页面其他地方隐藏公式
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.formula-container').forEach(el => {
+                el.classList.add('hidden');
+            });
+        });
+
+        // 计算利润
+        document.getElementById('calculate-btn').addEventListener('click', calculateProfit);
+        
+        // 重置表单
+        document.getElementById('reset-btn').addEventListener('click', resetForm);
+        
+        // 保存记录
+        document.getElementById('save-btn').addEventListener('click', saveRecord);
+
+        // 页面加载时：恢复表单、加载历史、自动计算并绑定自动计算
+        window.addEventListener('load', () => {
+            restoreFormState();
+            loadHistoryRecords();
+            calculateProfit();
+            attachAutoCalc();
+        });
+
+        // 计算利润函数
+        function calculateProfit() {
+            // 获取输入值
+            const purchaseCurrency = document.getElementById('purchase-currency').value;
+            const purchaseExchangeRate = parseFloat(document.getElementById('purchase-exchange-rate').value) || 0;
+            const purchaseQuantity = parseFloat(document.getElementById('purchase-quantity').value) || 0;
+            const purchasePrice = parseFloat(document.getElementById('purchase-price').value) || 0;
+            const purchaseFreight = parseFloat(document.getElementById('purchase-freight').value) || 0;
+            const otherPurchaseCosts = parseFloat(document.getElementById('other-purchase-costs').value) || 0;
+            const sellingPrice = parseFloat(document.getElementById('selling-price').value) || 0;
+            const sellingCurrency = document.getElementById('selling-currency').value;
+            const sellingExchangeRate = parseFloat(document.getElementById('selling-exchange-rate').value) || 0;
+            const platformCommission = parseFloat(document.getElementById('platform-commission').value) || 0;
+            const internationalFreight = parseFloat(document.getElementById('international-freight').value) || 0;
+            const advertisingCost = parseFloat(document.getElementById('advertising-cost').value) || 0;
+            const returnRate = parseFloat(document.getElementById('return-rate').value) || 0;
+            const otherSellingCosts = parseFloat(document.getElementById('other-selling-costs').value) || 0;
+
+            // 验证输入
+            if (purchaseQuantity <= 0 || purchasePrice <= 0 || sellingPrice <= 0 || 
+                purchaseExchangeRate <= 0 || sellingExchangeRate <= 0) {
+                showNotification('请确保采购数量、采购单价、销售单价和汇率为有效数值', 'error');
+                return;
+            }
+
+            // 计算原币种采购总成本
+            const originalPurchaseCost = purchaseQuantity * purchasePrice + purchaseFreight + otherPurchaseCosts;
+            
+            // 将采购成本转换为人民币
+            const totalPurchaseCostCNY = originalPurchaseCost * purchaseExchangeRate;
+            
+            // 将销售相关费用从销售币种转换为人民币
+            const sellingPriceCNY = sellingPrice * sellingExchangeRate;
+            const internationalFreightCNY = internationalFreight * sellingExchangeRate;
+            const advertisingCostCNY = advertisingCost * sellingExchangeRate;
+            const otherSellingCostsCNY = otherSellingCosts * sellingExchangeRate;
+            
+            // 计算各项成本
+            const totalSalesAmountCNY = purchaseQuantity * sellingPriceCNY;
+            const totalCommission = totalSalesAmountCNY * (platformCommission / 100);
+            const totalShippingCost = purchaseQuantity * internationalFreightCNY;
+            const totalAdvertisingCost = purchaseQuantity * advertisingCostCNY;
+            const returnLoss = totalSalesAmountCNY * (returnRate / 100);
+            const totalOtherCosts = otherSellingCostsCNY;
+            
+            // 总成本
+            const totalCost = totalPurchaseCostCNY + totalCommission + totalShippingCost + 
+                            totalAdvertisingCost + returnLoss + totalOtherCosts;
+            
+            // 总利润（人民币）
+            const totalProfitCNY = totalSalesAmountCNY - totalCost;
+            
+            // 利润率
+            const profitRate = totalSalesAmountCNY > 0 ? (totalProfitCNY / totalSalesAmountCNY) * 100 : 0;
+            
+            // 每件利润（人民币）
+            const profitPerUnitCNY = purchaseQuantity > 0 ? totalProfitCNY / purchaseQuantity : 0;
+            
+            // 原币种计算
+            const totalSalesAmountOriginal = purchaseQuantity * sellingPrice;
+            const totalProfitOriginal = totalProfitCNY / sellingExchangeRate;
+
+            // 更新结果显示
+            document.getElementById('original-purchase-cost').textContent = formatCurrency(originalPurchaseCost, purchaseCurrency);
+            document.getElementById('total-purchase-cost').textContent = formatCurrency(totalPurchaseCostCNY, 'CNY');
+            document.getElementById('total-sales-amount').textContent = formatCurrency(totalSalesAmountCNY, 'CNY');
+            document.getElementById('total-commission').textContent = formatCurrency(totalCommission, 'CNY');
+            document.getElementById('total-shipping-cost').textContent = formatCurrency(totalShippingCost, 'CNY');
+            document.getElementById('total-advertising-cost').textContent = formatCurrency(totalAdvertisingCost, 'CNY');
+            document.getElementById('return-loss').textContent = formatCurrency(returnLoss, 'CNY');
+            document.getElementById('total-other-costs').textContent = formatCurrency(totalOtherCosts, 'CNY');
+            document.getElementById('total-cost').textContent = formatCurrency(totalCost, 'CNY');
+            document.getElementById('total-profit').textContent = formatCurrency(totalProfitCNY, 'CNY');
+            document.getElementById('profit-rate').textContent = profitRate.toFixed(2) + '%';
+            document.getElementById('profit-per-unit').textContent = formatCurrency(profitPerUnitCNY, 'CNY');
+            // 颜色提示
+            const profitEl = document.getElementById('total-profit');
+            const rateEl = document.getElementById('profit-rate');
+            profitEl.classList.remove('text-secondary','text-danger','text-neutral');
+            rateEl.classList.remove('text-secondary','text-danger','text-neutral');
+            if (totalProfitCNY > 0) {
+                profitEl.classList.add('text-secondary');
+            } else if (totalProfitCNY < 0) {
+                profitEl.classList.add('text-danger');
+            } else {
+                profitEl.classList.add('text-neutral');
+            }
+            if (profitRate >= 20) {
+                rateEl.classList.add('text-secondary');
+            } else if (profitRate <= 0) {
+                rateEl.classList.add('text-danger');
+            } else {
+                rateEl.classList.add('text-neutral');
+            }
+            
+            // 显示原币种金额
+            document.getElementById('original-currency-amount').textContent = formatCurrency(totalSalesAmountOriginal, sellingCurrency);
+            document.getElementById('original-currency-profit').textContent = formatCurrency(totalProfitOriginal, sellingCurrency);
+
+            // 推导价格：保本价与建议价
+            const q = purchaseQuantity;
+            const R = sellingExchangeRate;
+            const cr = platformCommission / 100;
+            const rr = returnRate / 100;
+            const targetRate = (parseFloat(document.getElementById('target-profit-rate')?.value) || 0) / 100;
+            const fixedCostsCNY = totalPurchaseCostCNY + q * (internationalFreightCNY + advertisingCostCNY) + otherSellingCostsCNY;
+            const denomBreakEven = q * R * (1 - cr - rr);
+            const denomTarget = q * R * (1 - cr - rr - targetRate);
+            const breakEvenOriginal = denomBreakEven > 0 ? (fixedCostsCNY / denomBreakEven) : NaN;
+            const recommendedOriginal = denomTarget > 0 ? (fixedCostsCNY / denomTarget) : NaN;
+            document.getElementById('break-even-price-original') && (document.getElementById('break-even-price-original').textContent = isFinite(breakEvenOriginal) ? formatCurrency(breakEvenOriginal, sellingCurrency) : '—');
+            document.getElementById('break-even-price-cny') && (document.getElementById('break-even-price-cny').textContent = isFinite(breakEvenOriginal) ? formatCurrency(breakEvenOriginal * R, 'CNY') : '—');
+            document.getElementById('recommended-price-original') && (document.getElementById('recommended-price-original').textContent = isFinite(recommendedOriginal) ? formatCurrency(recommendedOriginal, sellingCurrency) : '—');
+
+            
+            // 更新图表
+            costChart.data.datasets[0].data = [
+                totalPurchaseCostCNY,
+                totalShippingCost,
+                totalCommission,
+                totalAdvertisingCost,
+                totalOtherCosts + returnLoss
+            ];
+            costChart.update();
+
+            // 生成利润建议
+            generateProfitSuggestions(profitRate, totalProfitCNY, platformCommission, totalShippingCost, totalAdvertisingCost);
+
+            // 更新公式显示中的实际数值示例
+            updateFormulaExamples(
+                purchaseQuantity, purchasePrice, purchaseFreight, otherPurchaseCosts, purchaseExchangeRate,
+                sellingPrice, sellingExchangeRate, platformCommission, internationalFreight,
+                advertisingCost, returnRate, otherSellingCosts
+            );
+
+            showNotification('利润计算完成', 'success');
+            // 保存表单状态
+            saveFormState();
+        }
+
+        // 更新公式示例
+        function updateFormulaExamples(
+            purchaseQuantity, purchasePrice, purchaseFreight, otherPurchaseCosts, purchaseExchangeRate,
+            sellingPrice, sellingExchangeRate, platformCommission, internationalFreight,
+            advertisingCost, returnRate, otherSellingCosts
+        ) {
+            const sellingCurrency = document.getElementById('selling-currency').value;
+            const sellingSymbol = currencySymbols[sellingCurrency] || '';
+            const purchaseCurrency = document.getElementById('purchase-currency').value;
+            const purchaseSymbol = currencySymbols[purchaseCurrency] || '';
+            
+            // 更新各公式的具体计算示例
+            document.getElementById('formula-original-purchase').innerHTML = 
+                `公式：采购数量 × 采购单价 + 国内运费 + 其他采购成本<br>
+                计算：${purchaseQuantity} × ${purchaseSymbol}${purchasePrice.toFixed(2)} + ${purchaseSymbol}${purchaseFreight.toFixed(2)} + ${purchaseSymbol}${otherPurchaseCosts.toFixed(2)}`;
+                
+            document.getElementById('formula-total-purchase').innerHTML = 
+                `公式：总采购成本(原币种) × 采购汇率<br>
+                计算：${purchaseSymbol}${(purchaseQuantity * purchasePrice + purchaseFreight + otherPurchaseCosts).toFixed(2)} × ${purchaseExchangeRate.toFixed(2)}`;
+                
+            document.getElementById('formula-total-sales').innerHTML = 
+                `公式：采购数量 × 电商平台售价 × 销售汇率<br>
+                计算：${purchaseQuantity} × ${sellingSymbol}${sellingPrice.toFixed(2)} × ${sellingExchangeRate.toFixed(2)}`;
+        }
+
+        // 生成利润建议
+        function generateProfitSuggestions(profitRate, totalProfit, commissionRate, shippingCost, advertisingCost) {
+            const suggestionsElement = document.getElementById('profit-suggestions');
+            const suggestions = [];
+
+            // 根据利润率提供建议
+            if (totalProfit < 0) {
+                suggestions.push('<p class="text-danger"><i class="fa fa-exclamation-circle mr-1"></i>当前交易预计亏损，请考虑提高售价或降低采购成本</p>');
+            } else if (profitRate < 10) {
+                suggestions.push('<p><i class="fa fa-info-circle mr-1"></i>利润率较低（<10%），建议优化成本结构</p>');
+            } else if (profitRate < 20) {
+                suggestions.push('<p><i class="fa fa-check-circle mr-1"></i>利润率良好（10%-20%），可维持当前策略</p>');
+            } else {
+                suggestions.push('<p class="text-secondary"><i class="fa fa-star mr-1"></i>利润率优秀（>20%），建议考虑增加推广力度</p>');
+            }
+
+            // 佣金相关建议
+            if (commissionRate > 8) {
+                suggestions.push('<p><i class="fa fa-lightbulb-o mr-1"></i>平台佣金率较高（>8%），可尝试通过平台活动降低佣金比例</p>');
+            }
+
+            // 运费相关建议
+            if (shippingCost > 0 && shippingCost > (totalProfit * 0.3) && totalProfit > 0) {
+                suggestions.push('<p><i class="fa fa-lightbulb-o mr-1"></i>运费占比过高（>30%利润），可考虑优化物流方案或提高售价</p>');
+            }
+
+            // 广告相关建议
+            if (advertisingCost > 0 && advertisingCost > (totalProfit * 0.2) && totalProfit > 0) {
+                suggestions.push('<p><i class="fa fa-lightbulb-o mr-1"></i>广告成本占比过高（>20%利润），可优化广告投放策略提高ROI</p>');
+            }
+
+            suggestionsElement.innerHTML = suggestions.join('');
+        }
+
+        // 重置表单
+        function resetForm() {
+            document.querySelectorAll('input, select').forEach(element => {
+                if (element.type !== 'checkbox' && element.type !== 'radio') {
+                    element.value = '';
+                } else {
+                    element.checked = false;
+                }
+            });
+            
+            // 重置默认值
+            document.getElementById('purchase-currency').value = 'CNY';
+            document.getElementById('purchase-exchange-rate').value = 1.00;
+            document.getElementById('purchase-quantity').value = 100;
+            document.getElementById('purchase-price').value = 50.00;
+            document.getElementById('purchase-freight').value = 50.00;
+            document.getElementById('other-purchase-costs').value = 0.00;
+            document.getElementById('selling-currency').value = 'USD';
+            document.getElementById('selling-price').value = 16.67;
+            document.getElementById('selling-exchange-rate').value = 7.20;
+            document.getElementById('platform-commission').value = 5.0;
+            document.getElementById('international-freight').value = 2.08;
+            document.getElementById('advertising-cost').value = 0.69;
+            document.getElementById('return-rate').value = 3.0;
+            document.getElementById('other-selling-costs').value = 0.00;
+            document.getElementById('target-profit-rate').value = 15.0; // 重置目标利润率
+            
+            // 更新币种符号
+            document.getElementById('purchase-price-symbol').textContent = '¥';
+            document.getElementById('freight-symbol').textContent = '¥';
+            document.getElementById('other-purchase-symbol').textContent = '¥';
+            document.getElementById('price-currency-symbol').textContent = '$';
+            document.getElementById('international-freight-symbol').textContent = '$';
+            document.getElementById('advertising-cost-symbol').textContent = '$';
+            document.getElementById('other-selling-costs-symbol').textContent = '$';
+            
+            // 重置结果
+            document.getElementById('original-purchase-cost').textContent = '¥0.00';
+            document.getElementById('total-purchase-cost').textContent = '¥0.00';
+            document.getElementById('total-sales-amount').textContent = '¥0.00';
+            document.getElementById('total-commission').textContent = '¥0.00';
+            document.getElementById('total-shipping-cost').textContent = '¥0.00';
+            document.getElementById('total-advertising-cost').textContent = '¥0.00';
+            document.getElementById('return-loss').textContent = '¥0.00';
+            document.getElementById('total-other-costs').textContent = '¥0.00';
+            document.getElementById('total-cost').textContent = '¥0.00';
+            document.getElementById('total-profit').textContent = '¥0.00';
+            document.getElementById('profit-rate').textContent = '0.00%';
+            document.getElementById('profit-per-unit').textContent = '¥0.00';
+            document.getElementById('break-even-price-original').textContent = '$0.00';
+            document.getElementById('break-even-price-cny').textContent = '¥0.00';
+            document.getElementById('recommended-price-original').textContent = '$0.00';
+            document.getElementById('original-currency-amount').textContent = '$0.00';
+            document.getElementById('original-currency-profit').textContent = '$0.00';
+            
+            // 重置图表
+            costChart.data.datasets[0].data = [0, 0, 0, 0, 0];
+            costChart.update();
+            
+            // 重置建议
+            document.getElementById('profit-suggestions').innerHTML = '<p>请点击"计算利润"获取个性化建议</p>';
+            
+            // 隐藏所有公式
+            document.querySelectorAll('.formula-container').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            showNotification('表单已重置', 'info');
+        }
+
+        // 保存记录
+        function saveRecord() {
+            // 获取产品信息
+            const productName = document.getElementById('product-name').value || '未命名产品';
+            const purchaseCurrency = document.getElementById('purchase-currency').value;
+            const purchaseCurrencySymbol = currencySymbols[purchaseCurrency] || '';
+            const purchaseQuantity = parseFloat(document.getElementById('purchase-quantity').value) || 0;
+            const purchasePrice = parseFloat(document.getElementById('purchase-price').value) || 0;
+            const sellingPrice = parseFloat(document.getElementById('selling-price').value) || 0;
+            const sellingCurrency = document.getElementById('selling-currency').value;
+            const sellingCurrencySymbol = currencySymbols[sellingCurrency] || '';
+            
+            // 获取计算结果
+            const totalProfitText = document.getElementById('total-profit').textContent;
+            const profitRateText = document.getElementById('profit-rate').textContent;
+            
+            // 验证是否有计算结果
+            if (totalProfitText === '¥0.00' && profitRateText === '0.00%') {
+                showNotification('请先计算利润再保存记录', 'warning');
+                return;
+            }
+            
+            // 创建记录对象
+            const record = {
+                id: Date.now(),
+                productName,
+                purchaseCurrency,
+                purchaseCurrencySymbol,
+                purchaseQuantity,
+                purchasePrice,
+                sellingPrice,
+                sellingCurrency,
+                sellingCurrencySymbol,
+                totalProfit: totalProfitText,
+                profitRate: profitRateText,
+                timestamp: new Date().toISOString()
+            };
+            
+            // 从本地存储获取现有记录
+            let records = JSON.parse(localStorage.getItem('profitCalculationRecords') || '[]');
+            
+            // 添加新记录
+            records.unshift(record);
+            
+            // 限制记录数量为100条
+            if (records.length > 100) {
+                records = records.slice(0, 100);
+            }
+            
+            // 保存到本地存储
+            localStorage.setItem('profitCalculationRecords', JSON.stringify(records));
+            
+            // 更新历史记录表格
+            updateHistoryTable();
+            
+            showNotification('记录已保存', 'success');
+        }
+
+        // 加载历史记录
+        function loadHistoryRecords() {
+            updateHistoryTable();
+        }
+
+        // 更新历史记录表格
+        function updateHistoryTable() {
+            const tableBody = document.getElementById('history-table-body');
+            const records = JSON.parse(localStorage.getItem('profitCalculationRecords') || '[]');
+            
+            if (records.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" class="px-3 py-6 text-center text-neutral text-sm">暂无记录</td></tr>';
+                return;
+            }
+            
+            let tableHtml = '';
+            
+            records.forEach(record => {
+                const date = new Date(record.timestamp);
+                const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+                
+                tableHtml += `
+                    <tr>
+                        <td class="px-3 py-2 whitespace-nowrap">${record.productName}</td>
+                        <td class="px-3 py-2 whitespace-nowrap">${record.purchaseQuantity}</td>
+                        <td class="px-3 py-2 whitespace-nowrap">${record.purchaseCurrencySymbol}${record.purchasePrice.toFixed(2)} (${record.purchaseCurrency})</td>
+                        <td class="px-3 py-2 whitespace-nowrap">${record.sellingCurrencySymbol}${record.sellingPrice.toFixed(2)} (${record.sellingCurrency})</td>
+                        <td class="px-3 py-2 whitespace-nowrap ${record.totalProfit.startsWith('-') ? 'text-danger' : 'text-secondary'}">${record.totalProfit}</td>
+                        <td class="px-3 py-2 whitespace-nowrap ${parseFloat(record.profitRate) < 10 ? 'text-neutral' : 'text-secondary'}">${record.profitRate}</td>
+                        <td class="px-3 py-2 whitespace-nowrap text-sm text-neutral">${formattedDate}</td>
+                        <td class="px-3 py-2 whitespace-nowrap">
+                            <button class="text-primary hover:text-primary/80 mr-3" onclick="deleteRecord(${record.id})">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = tableHtml;
+        }
+
+        // 删除记录
+        function deleteRecord(id) {
+            let records = JSON.parse(localStorage.getItem('profitCalculationRecords') || '[]');
+            records = records.filter(record => record.id !== id);
+            localStorage.setItem('profitCalculationRecords', JSON.stringify(records));
+            updateHistoryTable();
+            showNotification('记录已删除', 'info');
+        }
+
+        // 格式化货币
+        function formatCurrency(value, currency) {
+            const symbol = currencySymbols[currency] || '¥';
+            return symbol + parseFloat(value).toFixed(2);
+        }
+
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notification-icon');
+            const messageElement = document.getElementById('notification-message');
+            
+            // 设置通知类型样式
+            notification.className = 'fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center';
+            
+            if (type === 'success') {
+                notification.classList.add('bg-secondary', 'text-white');
+                icon.className = 'fa fa-check-circle';
+            } else if (type === 'error') {
+                notification.classList.add('bg-danger', 'text-white');
+                icon.className = 'fa fa-exclamation-circle';
+            } else if (type === 'warning') {
+                notification.classList.add('bg-yellow-500', 'text-white');
+                icon.className = 'fa fa-exclamation-triangle';
+            } else {
+                notification.classList.add('bg-primary', 'text-white');
+                icon.className = 'fa fa-info-circle';
+            }
+            
+            // 设置消息
+            messageElement.textContent = message;
+            
+            // 显示通知
+            setTimeout(() => {
+                notification.classList.remove('translate-y-20', 'opacity-0');
+            }, 10);
+            
+            // 3秒后隐藏通知
+            setTimeout(() => {
+                notification.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // 防抖与自动计算
+        function debounce(fn, delay = 300) {
+            let timerId;
+            return function(...args) {
+                clearTimeout(timerId);
+                timerId = setTimeout(() => fn.apply(this, args), delay);
+            };
+        }
+
+        function attachAutoCalc() {
+            const debounced = debounce(() => {
+                calculateProfit();
+                saveFormState();
+            }, 300);
+            document.querySelectorAll('input, select').forEach(element => {
+                element.addEventListener('input', debounced);
+                element.addEventListener('change', debounced);
+            });
+            const applyBtn = document.getElementById('calc-target-price-btn');
+            if (applyBtn) applyBtn.addEventListener('click', applyRecommendedPrice);
+        }
+
+        // 表单状态持久化
+        function saveFormState() {
+            const ids = [
+                'product-name','product-category','product-weight','supplier',
+                'purchase-currency','purchase-exchange-rate','purchase-quantity','purchase-price','purchase-freight','other-purchase-costs',
+                'selling-currency','selling-price','selling-exchange-rate','platform-commission','international-freight','advertising-cost','return-rate','other-selling-costs',
+                'target-profit-rate'
+            ];
+            const data = {};
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) data[id] = el.value;
+            });
+            localStorage.setItem('profitCalcForm', JSON.stringify(data));
+        }
+
+        function restoreFormState() {
+            try {
+                const data = JSON.parse(localStorage.getItem('profitCalcForm') || 'null');
+                if (!data) return;
+                Object.keys(data).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = data[id];
+                });
+                // 触发币种变更以刷新符号
+                document.getElementById('purchase-currency').dispatchEvent(new Event('change'));
+                document.getElementById('selling-currency').dispatchEvent(new Event('change'));
+            } catch(e) { /* ignore */ }
+        }
+
+        // 应用建议售价
+        function applyRecommendedPrice() {
+            const R = parseFloat(document.getElementById('selling-exchange-rate').value) || 0;
+            const q = parseFloat(document.getElementById('purchase-quantity').value) || 0;
+            const purchaseExchangeRate = parseFloat(document.getElementById('purchase-exchange-rate').value) || 0;
+            const purchasePrice = parseFloat(document.getElementById('purchase-price').value) || 0;
+            const purchaseFreight = parseFloat(document.getElementById('purchase-freight').value) || 0;
+            const otherPurchaseCosts = parseFloat(document.getElementById('other-purchase-costs').value) || 0;
+            const internationalFreight = parseFloat(document.getElementById('international-freight').value) || 0;
+            const advertisingCost = parseFloat(document.getElementById('advertising-cost').value) || 0;
+            const otherSellingCosts = parseFloat(document.getElementById('other-selling-costs').value) || 0;
+            const cr = (parseFloat(document.getElementById('platform-commission').value) || 0) / 100;
+            const rr = (parseFloat(document.getElementById('return-rate').value) || 0) / 100;
+            const t = (parseFloat(document.getElementById('target-profit-rate').value) || 0) / 100;
+            if (q <= 0 || R <= 0 || purchaseExchangeRate <= 0) {
+                showNotification('请先填写有效的数量与汇率', 'warning');
+                return;
+            }
+            const originalPurchaseCost = q * purchasePrice + purchaseFreight + otherPurchaseCosts;
+            const totalPurchaseCostCNY = originalPurchaseCost * purchaseExchangeRate;
+            const fixedCostsCNY = totalPurchaseCostCNY + q * R * (internationalFreight + advertisingCost) + otherSellingCosts * R;
+            const denom = q * R * (1 - cr - rr - t);
+            if (!(denom > 0)) {
+                showNotification('目标利润率过高或参数不合理，无法计算建议售价', 'error');
+                return;
+            }
+            const recommendedOriginal = fixedCostsCNY / denom;
+            document.getElementById('selling-price').value = recommendedOriginal.toFixed(2);
+            calculateProfit();
+            showNotification('已应用建议售价', 'success');
+        }
+
+        // 历史记录导出与清空
+        document.addEventListener('DOMContentLoaded', () => {
+            const exportBtn = document.getElementById('export-btn');
+            const clearBtn = document.getElementById('clear-history-btn');
+            if (exportBtn) exportBtn.addEventListener('click', exportHistoryToCSV);
+            if (clearBtn) clearBtn.addEventListener('click', clearHistoryAll);
+        });
+
+        function exportHistoryToCSV() {
+            const records = JSON.parse(localStorage.getItem('profitCalculationRecords') || '[]');
+            if (!records.length) {
+                showNotification('暂无历史可导出', 'warning');
+                return;
+            }
+            const header = ['产品名称','采购数量','采购单价','采购币种','销售单价','销售币种','总利润(元)','利润率','计算时间'];
+            const rows = records.map(r => [
+                r.productName,
+                r.purchaseQuantity,
+                r.purchasePrice.toFixed(2),
+                r.purchaseCurrency,
+                r.sellingPrice.toFixed(2),
+                r.sellingCurrency,
+                r.totalProfit,
+                r.profitRate,
+                r.timestamp
+            ]);
+            const csv = [header].concat(rows).map(cols => cols.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'profit_history.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showNotification('CSV已导出', 'success');
+        }
+
+        function clearHistoryAll() {
+            if (!confirm('确认清空所有历史记录吗？此操作不可恢复')) return;
+            localStorage.removeItem('profitCalculationRecords');
+            updateHistoryTable();
+            showNotification('历史已清空', 'info');
+        }
+    </script>
+</body>
+</html>
+    

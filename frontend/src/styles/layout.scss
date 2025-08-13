@@ -1,0 +1,142 @@
+// 布局样式
+.layout-container {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.layout-sidebar {
+  height: 100%;
+  background: var(--el-bg-color);
+  border-right: 1px solid var(--el-border-color-light);
+  transition: width 0.3s ease;
+
+  &.collapsed {
+    width: 64px;
+  }
+
+  &:not(.collapsed) {
+    width: 240px;
+  }
+}
+
+.layout-main {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.layout-header {
+  height: 60px;
+  background: var(--el-bg-color);
+  border-bottom: 1px solid var(--el-border-color-light);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  flex-shrink: 0;
+}
+
+.layout-content {
+  flex: 1;
+  padding: 16px;
+  overflow: auto;
+  background: var(--el-bg-color-page);
+}
+
+// 响应式布局
+@media (max-width: 768px) {
+  .layout-container {
+    flex-direction: column;
+  }
+
+  .layout-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+
+    &.mobile-open {
+      transform: translateX(0);
+    }
+  }
+
+  .layout-main {
+    width: 100%;
+  }
+}
+
+// 卡片样式
+.card {
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: var(--el-border-radius-base);
+  box-shadow: var(--el-box-shadow-light);
+  padding: 16px;
+  margin-bottom: 16px;
+
+  &-header {
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--el-border-color-lighter);
+    
+    h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--el-text-color-primary);
+    }
+  }
+
+  &-body {
+    padding: 0;
+  }
+
+  &-footer {
+    padding-top: 12px;
+    margin-top: 16px;
+    border-top: 1px solid var(--el-border-color-lighter);
+  }
+}
+
+// 工具栏样式
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  margin-bottom: 16px;
+
+  &-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+// 页面标题
+.page-header {
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--el-text-color-primary);
+    margin: 0 0 8px 0;
+  }
+
+  .description {
+    color: var(--el-text-color-regular);
+    font-size: 14px;
+    margin: 0;
+  }
+} 

@@ -1,0 +1,102 @@
+// 颜色变量
+:root {
+  // 主色调
+  --primary-color: #409eff;
+  --success-color: #67c23a;
+  --warning-color: #e6a23c;
+  --danger-color: #f56c6c;
+  --info-color: #909399;
+
+  // 背景色
+  --bg-color: #ffffff;
+  --bg-color-light: #f5f7fa;
+  --bg-color-dark: #303133;
+
+  // 文字颜色
+  --text-color-primary: #303133;
+  --text-color-regular: #606266;
+  --text-color-secondary: #909399;
+  --text-color-placeholder: #c0c4cc;
+
+  // 边框颜色
+  --border-color: #dcdfe6;
+  --border-color-light: #e4e7ed;
+  --border-color-lighter: #ebeef5;
+  --border-color-extra-light: #f2f6fc;
+
+  // 阴影
+  --box-shadow-base: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+  --box-shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+
+  // 圆角
+  --border-radius-base: 4px;
+  --border-radius-small: 2px;
+  --border-radius-large: 8px;
+
+  // 间距
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  // 字体大小
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-base: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 20px;
+  --font-size-3xl: 24px;
+
+  // Z-index
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+}
+
+// SCSS 变量
+$primary-color: var(--primary-color);
+$success-color: var(--success-color);
+$warning-color: var(--warning-color);
+$danger-color: var(--danger-color);
+$info-color: var(--info-color);
+
+$bg-color: var(--bg-color);
+$bg-color-light: var(--bg-color-light);
+$bg-color-dark: var(--bg-color-dark);
+
+$text-color-primary: var(--text-color-primary);
+$text-color-regular: var(--text-color-regular);
+$text-color-secondary: var(--text-color-secondary);
+$text-color-placeholder: var(--text-color-placeholder);
+
+$border-color: var(--border-color);
+$border-color-light: var(--border-color-light);
+$border-color-lighter: var(--border-color-lighter);
+$border-color-extra-light: var(--border-color-extra-light);
+
+$box-shadow-base: var(--box-shadow-base);
+$box-shadow-light: var(--box-shadow-light);
+
+$border-radius-base: var(--border-radius-base);
+$border-radius-small: var(--border-radius-small);
+$border-radius-large: var(--border-radius-large);
+
+$spacing-xs: var(--spacing-xs);
+$spacing-sm: var(--spacing-sm);
+$spacing-md: var(--spacing-md);
+$spacing-lg: var(--spacing-lg);
+$spacing-xl: var(--spacing-xl);
+
+$font-size-xs: var(--font-size-xs);
+$font-size-sm: var(--font-size-sm);
+$font-size-base: var(--font-size-base);
+$font-size-lg: var(--font-size-lg);
+$font-size-xl: var(--font-size-xl);
+$font-size-2xl: var(--font-size-2xl);
+$font-size-3xl: var(--font-size-3xl); 
